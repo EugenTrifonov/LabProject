@@ -3,18 +3,23 @@ using RestSharp;
 
 namespace QAAutomationLab.CoreLayer.Clients
 {
-    public class BaseRestAPIClient
+    public abstract class BaseRestAPIClient
     {
-        public BaseRestAPIClient(string url)
+        protected BaseRestAPIClient(string url)
         {
             Client = new RestClient(url);
+            BaseUrl = url;
         }
 
-        public RestClient Client { get; private set; }
+        public RestClient Client { get; protected set; }
+
+        public string BaseUrl{ get; private set; }
 
         public RestRequest CreateRequest(string resourse, Method method)
         {
             var request = new RestRequest(resourse, method);
+
+            request.RequestFormat = DataFormat.Json;
 
             return request;
         }
@@ -24,11 +29,18 @@ namespace QAAutomationLab.CoreLayer.Clients
             Client.AddDefaultHeader(name, value);
         }
 
-        public Task<RestResponse> ExecuteAsyncRequest(RestRequest request)
+        public RestResponse ExecuteAsyncRequest(RestRequest request)
         {
             var response = Client.ExecuteAsync(request);
 
-            return response;
+            return response.Result;
+        }
+
+        public RestResponse<T> ExecuteAsyncRequest<T>(RestRequest request)
+        {
+            var response = Client.ExecuteAsync<T>(request);
+
+            return response.Result;
         }
     }
 }
