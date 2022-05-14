@@ -7,12 +7,17 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
     [TestFixture]
     public class LoginApiTests:BaseRestAPITest
     {
+        [SetUp]
+        public void SetUp()
+        {
+            PlaygroundAPIClient.CreateUser("jjhfdgsfwwer@mail.ru", "AbF61Hsn4");
+        }
 
         [Test]
         [TestCase("jjhfdgsfwwer@mail.ru", "AbF61Hsn4")]
         public void LogInWithCorrectData(string email, string password)
         {
-            RestResponse<SucessfullLogInUser> response = LoginClient.LogIn(email, password);
+            RestResponse<SucessfullLogInUser> response = PlaygroundAPIClient.LogIn(email, password);
 
             Assert.AreEqual(200, (int)response.StatusCode);
         }
@@ -21,7 +26,7 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
         [TestCase("jjhfdgsfwwer@mail.ru", "Adsfdsf2")]
         public void LoginWithIncorrectData(string email, string password) 
         {
-            RestResponse<SucessfullLogInUser> response = LoginClient.LogIn(email, password);
+            RestResponse<SucessfullLogInUser> response = PlaygroundAPIClient.LogIn(email, password);
 
             Assert.AreEqual(422, (int)response.StatusCode);
         }
@@ -31,7 +36,7 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
         [TestCase("fsfsfsfsf234@mail.ru", null)]
         public void LoginWithNullData(string email, string password)
         {
-            RestResponse<SucessfullLogInUser> response = LoginClient.LogIn(email, password);
+            RestResponse<SucessfullLogInUser> response = PlaygroundAPIClient.LogIn(email, password);
 
             Assert.AreEqual(422, (int)response.StatusCode);
         }

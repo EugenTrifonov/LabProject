@@ -13,9 +13,9 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
         [TestCase("jjhfdgsfwwer@mail.ru", "AbF61Hsn4")]
         public void GetApplicationWithAccessToken(string email, string password)
         {
-            RestResponse<NewUser> createUserResponse = CreateUserClient.CreateUser(email, password);
+            PlaygroundAPIClient.CreateUser(email, password);
 
-            RestResponse<SucessfullLogInUser> response = LoginClient.LogIn(email, password);
+            RestResponse<SucessfullLogInUser> response = PlaygroundAPIClient.LogIn(email, password);
 
             var data = JsonConvert.DeserializeObject<SucessfullLogInUser>(response.Content, new JsonSerializerSettings()
             {
@@ -34,17 +34,16 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
                 HomePage = "www.homepage.com"
             };
 
-            CreateApplicationClient.Client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(token, "Bearer");
-            GetApplicationClient.Client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(token, "Bearer");
+            PlaygroundAPIClient.Client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(token, "Bearer");
 
-            RestResponse<ApplicationData> crateApplicationResponse = CreateApplicationClient.CreateApp(appData);
+            RestResponse<ApplicationData> crateApplicationResponse = PlaygroundAPIClient.CreateApp(appData);
 
             var appId = JsonConvert.DeserializeObject<ApplicationData>(crateApplicationResponse.Content, new JsonSerializerSettings()
             {
                 NullValueHandling = NullValueHandling.Ignore,
             }).applicant_id;
 
-            RestResponse<ApplicationData> getApplicationResponse = GetApplicationClient.GetApp(appId);
+            RestResponse<ApplicationData> getApplicationResponse = PlaygroundAPIClient.GetApp(appId);
 
             Assert.AreEqual(200, (int)getApplicationResponse.StatusCode);
         }
@@ -54,7 +53,7 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
         {
             var id = 1;
 
-            RestResponse<ApplicationData> getApplicationResponse = GetApplicationClient.GetApp(id);
+            RestResponse<ApplicationData> getApplicationResponse = PlaygroundAPIClient.GetApp(id);
 
             Assert.AreEqual(401, (int)getApplicationResponse.StatusCode);
         }

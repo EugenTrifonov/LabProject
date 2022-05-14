@@ -13,9 +13,9 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
         [TestCase("jjhfdgsfwwer@mail.ru", "AbF61Hsn4")]
         public void DeleteAppWithAcessToken(string email, string password)
         {
-            RestResponse<NewUser> createUserResponse = CreateUserClient.CreateUser(email, password);
+            PlaygroundAPIClient.CreateUser(email, password);
 
-            RestResponse<SucessfullLogInUser> response = LoginClient.LogIn(email, password);
+            RestResponse<SucessfullLogInUser> response = PlaygroundAPIClient.LogIn(email, password);
 
             var data = JsonConvert.DeserializeObject<SucessfullLogInUser>(response.Content, new JsonSerializerSettings()
             {
@@ -34,10 +34,9 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
                 HomePage = "www.homepage.com"
             };
 
-            CreateApplicationClient.Client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(token, "Bearer");
-            GetApplicationClient.Client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(token, "Bearer");
+            PlaygroundAPIClient.Client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(token, "Bearer");
 
-            RestResponse<ApplicationData> createApplicationResponse = CreateApplicationClient.CreateApp(appData);
+            RestResponse<ApplicationData> createApplicationResponse = PlaygroundAPIClient.CreateApp(appData);
 
             var app_data = JsonConvert.DeserializeObject<ApplicationData>(createApplicationResponse.Content, new JsonSerializerSettings()
             {
@@ -46,7 +45,7 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
 
             var appId = app_data.applicant_id;
 
-            RestResponse<SuccessMessage> deleteApplicationResponse = GetApplicationClient.DeleteApp(appId);
+            RestResponse<SuccessMessage> deleteApplicationResponse = PlaygroundAPIClient.DeleteApp(appId);
 
             Assert.AreEqual(200, (int)deleteApplicationResponse.StatusCode);
         }

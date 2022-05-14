@@ -11,7 +11,7 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
         [TestCase("jjhfdgsfwwer@mail.ru","AbF61Hsn4")]
         public void CreateUserWithCorrectData(string email,string password)
         {
-            RestResponse<NewUser> response = CreateUserClient.CreateUser(email, password);
+            RestResponse<NewUser> response = PlaygroundAPIClient.CreateUser(email, password);
 
             Assert.AreEqual(201, (int)response.StatusCode);
         }
@@ -20,7 +20,9 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
         [TestCase("jjhfdgsfwwer@mail.ru", "AbF61Hsn4")]
         public void CreateUserWithExistingData(string email, string password)
         {
-            RestResponse<NewUser> response = CreateUserClient.CreateUser(email, password);
+            PlaygroundAPIClient.CreateUser(email, password);
+
+            RestResponse<NewUser> response = PlaygroundAPIClient.CreateUser(email, password);
 
             Assert.AreEqual(500, (int)response.StatusCode);
         }
@@ -30,7 +32,7 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
         [TestCase("null", "AbF61Hsn4")]
         public void CreateUserWithoutFullData(string email, string password)
         {
-            RestResponse<NewUser> response = CreateUserClient.CreateUser(email, password);
+            RestResponse<NewUser> response = PlaygroundAPIClient.CreateUser(email, password);
 
             Assert.AreEqual(422, (int)response.StatusCode);
         }

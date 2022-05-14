@@ -13,9 +13,9 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
         [TestCase("jjhfdgsfwwer@mail.ru", "AbF61Hsn4")]
         public void GetUserWithAccessToken(string email, string password)
         {
-            RestResponse<NewUser> createUserResponse = CreateUserClient.CreateUser(email, password);
+            PlaygroundAPIClient.CreateUser(email, password);
 
-            RestResponse<SucessfullLogInUser> response = LoginClient.LogIn(email, password);
+            RestResponse<SucessfullLogInUser> response = PlaygroundAPIClient.LogIn(email, password);
 
             var data = JsonConvert.DeserializeObject<SucessfullLogInUser>(response.Content, new JsonSerializerSettings()
             {
@@ -25,13 +25,13 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
             var token = data.Token;
             int id = data.Id;
 
-            GetUserClient.Client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(token, "Bearer");
+            PlaygroundAPIClient.Client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(token, "Bearer");
 
-            RestResponse<NewUser> getuserresponse = GetUserClient.GetUser(id);
-            RestResponse<SuccessMessage> deleteuserresponse = DeleteUserClient.DeleteUser(id);
+            RestResponse<NewUser> getuserresponse = PlaygroundAPIClient.GetUser(id);
+
+            PlaygroundAPIClient.DeleteUser(id);
 
             Assert.AreEqual(200, (int)getuserresponse.StatusCode);
-
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
         {
             var id = 1;
 
-            RestResponse<NewUser> getuserresponse = GetUserClient.GetUser(id);
+            RestResponse<NewUser> getuserresponse = PlaygroundAPIClient.GetUser(id);
 
             Assert.AreEqual(401, (int)getuserresponse.StatusCode);
         }

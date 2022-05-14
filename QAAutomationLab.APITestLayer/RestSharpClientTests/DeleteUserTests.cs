@@ -13,9 +13,9 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
         [TestCase("jjhfdgsfwwer@mail.ru", "AbF61Hsn4")]
         public void DeleteUserWithAccessToken(string email, string password)
         {
-            RestResponse<NewUser> createUserResponse = CreateUserClient.CreateUser(email, password);
+            PlaygroundAPIClient.CreateUser(email, password);
 
-            RestResponse<SucessfullLogInUser> response = LoginClient.LogIn(email, password);
+            RestResponse<SucessfullLogInUser> response = PlaygroundAPIClient.LogIn(email, password);
 
             var data = JsonConvert.DeserializeObject<SucessfullLogInUser>(response.Content, new JsonSerializerSettings()
             {
@@ -25,9 +25,9 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
             var token = data.Token;
             int id = data.Id;
 
-            DeleteUserClient.Client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(token, "Bearer");
+            PlaygroundAPIClient.Client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(token, "Bearer");
 
-            RestResponse<SuccessMessage> deleteuserresponse = DeleteUserClient.DeleteUser(id);
+            RestResponse<SuccessMessage> deleteuserresponse = PlaygroundAPIClient.DeleteUser(id);
 
             Assert.AreEqual(200, (int)deleteuserresponse.StatusCode);
         }
@@ -37,7 +37,7 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
         {
             var id = 1;
 
-            RestResponse<SuccessMessage> deleteuserresponse = DeleteUserClient.DeleteUser(id);
+            RestResponse<SuccessMessage> deleteuserresponse = PlaygroundAPIClient.DeleteUser(id);
 
             Assert.AreEqual(401, (int)deleteuserresponse.StatusCode);
         }

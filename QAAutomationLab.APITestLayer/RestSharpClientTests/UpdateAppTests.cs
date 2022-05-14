@@ -13,9 +13,9 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
         [TestCase("jjhfdgsfwwer@mail.ru", "AbF61Hsn4")]
         public void UpdateApplicationWithAcessToken(string email, string password)
         {
-            RestResponse<NewUser> createUserResponse = CreateUserClient.CreateUser(email, password);
+            PlaygroundAPIClient.CreateUser(email, password);
 
-            RestResponse<SucessfullLogInUser> response = LoginClient.LogIn(email, password);
+            RestResponse<SucessfullLogInUser> response = PlaygroundAPIClient.LogIn(email, password);
 
             var data = JsonConvert.DeserializeObject<SucessfullLogInUser>(response.Content, new JsonSerializerSettings()
             {
@@ -34,10 +34,9 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
                 HomePage = "www.homepage.com"
             };
 
-            CreateApplicationClient.Client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(token, "Bearer");
-            GetApplicationClient.Client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(token, "Bearer");
+            PlaygroundAPIClient.Client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(token, "Bearer");
 
-            RestResponse<ApplicationData> createApplicationResponse = CreateApplicationClient.CreateApp(appData);
+            RestResponse<ApplicationData> createApplicationResponse = PlaygroundAPIClient.CreateApp(appData);
 
             var app_data = JsonConvert.DeserializeObject<ApplicationData>(createApplicationResponse.Content, new JsonSerializerSettings()
             {
@@ -47,9 +46,9 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
             var appId = app_data.applicant_id;
             var phoneNumber = app_data.phone_number;
 
-            appData.phone_number = phoneNumber+"";
+            appData.phone_number = phoneNumber+"123";
 
-            RestResponse<ApplicationData> updateApplicationResponse = GetApplicationClient.UpdateApp(appId,appData);
+            RestResponse<ApplicationData> updateApplicationResponse = PlaygroundAPIClient.UpdateApp(appId,appData);
 
             var newPhoneNumber = JsonConvert.DeserializeObject<ApplicationData>(updateApplicationResponse.Content, new JsonSerializerSettings()
             {
@@ -57,7 +56,7 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
             }).phone_number;
 
             Assert.AreEqual(200, (int)updateApplicationResponse.StatusCode);
-            Assert.AreNotSame(phoneNumber,newPhoneNumber);
+            Assert.IsFalse(phoneNumber.Equals(newPhoneNumber));
         }
 
         [Test]
@@ -72,7 +71,7 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
                 HomePage = "www.homepage.com"
             };
 
-            RestResponse<ApplicationData> createApplicationResponse = CreateApplicationClient.CreateApp(appData);
+            RestResponse<ApplicationData> createApplicationResponse = PlaygroundAPIClient.CreateApp(appData);
 
             Assert.AreEqual(401, (int)createApplicationResponse.StatusCode);
         }

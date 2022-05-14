@@ -13,8 +13,9 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
         [TestCase("jjhfdgsfwwer@mail.ru", "AbF61Hsn4")]
         public void CreateApplicationWithAcessToken(string email, string password)
         {
-            RestResponse<NewUser> createUserResponse = CreateUserClient.CreateUser(email, password);
-            RestResponse<SucessfullLogInUser> loginResponse = LoginClient.LogIn(email, password);
+            PlaygroundAPIClient.CreateUser(email, password);
+
+            RestResponse<SucessfullLogInUser> loginResponse = PlaygroundAPIClient.LogIn(email, password);
 
             var data = JsonConvert.DeserializeObject<SucessfullLogInUser>(loginResponse.Content, new JsonSerializerSettings()
             {
@@ -33,11 +34,11 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
                 HomePage = "www.homepage.com"
             };
 
-            CreateApplicationClient.Client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(token, "Bearer");
+            PlaygroundAPIClient.Client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(token, "Bearer");
 
-            RestResponse<ApplicationData> crateApplicationResponse = CreateApplicationClient.CreateApp(appData);
+            RestResponse<ApplicationData> createApplicationResponse = PlaygroundAPIClient.CreateApp(appData);
 
-            Assert.AreEqual(200, (int)crateApplicationResponse.StatusCode);
+            Assert.AreEqual(200, (int)createApplicationResponse.StatusCode);
         }
 
         [Test]
@@ -52,9 +53,9 @@ namespace QAAutomationLab.APITestLayer.RestSharpClientTests
                 HomePage = "www.homepage.com"
             };
 
-            RestResponse<ApplicationData> crateApplicationResponse = CreateApplicationClient.CreateApp(appData);
+            RestResponse<ApplicationData> createApplicationResponse = PlaygroundAPIClient.CreateApp(appData);
 
-            Assert.AreEqual(401, (int)crateApplicationResponse.StatusCode);
+            Assert.AreEqual(401, (int)createApplicationResponse.StatusCode);
         }
     }
 }

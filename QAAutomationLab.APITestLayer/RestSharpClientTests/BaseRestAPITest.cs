@@ -1,26 +1,41 @@
-﻿using NUnit.Framework;
+﻿using Newtonsoft.Json;
+using NUnit.Framework;
 using QAAutomationLab.APITestLayer.RestSharpClientTests.Clients;
+using QAAutomationLab.APITestLayer.RestSharpClientTests.Models;
+using RestSharp;
+using RestSharp.Authenticators.OAuth2;
 
 namespace QAAutomationLab.APITestLayer.RestSharpClientTests
 {
     public class BaseRestAPITest
     {
-        protected CreateUserClient CreateUserClient { get; set; }
-        protected LoginClient LoginClient { get; set; }
-        protected GetUserClient GetUserClient { get; set; }
-        protected DeleteUserClient DeleteUserClient { get; set; }
-        protected CreateApplicationClient CreateApplicationClient { get; set; }
-        protected GetApplicationClient GetApplicationClient { get; set; }
+        protected PlaygroundAPIClient PlaygroundAPIClient { get; set; }
 
         [OneTimeSetUp]
         public void SetUp()
         {
-            CreateUserClient = new CreateUserClient("https://api.playgroundtech.io/v1");
-            LoginClient = new LoginClient("https://api.playgroundtech.io/v1");
-            GetUserClient = new GetUserClient("https://api.playgroundtech.io/v1");
-            DeleteUserClient = new DeleteUserClient("https://api.playgroundtech.io/v1");
-            CreateApplicationClient = new CreateApplicationClient("https://api.playgroundtech.io/v1");
-            GetApplicationClient = new GetApplicationClient("https://api.playgroundtech.io/v1");
+            PlaygroundAPIClient = new PlaygroundAPIClient("https://api.playgroundtech.io/v1");
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            string email = "jjhfdgsfwwer@mail.ru";
+            string password = "AbF61Hsn4";
+
+            RestResponse<SucessfullLogInUser> response = PlaygroundAPIClient.LogIn(email, password);
+
+            var data = JsonConvert.DeserializeObject<SucessfullLogInUser>(response.Content, new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+            });
+
+            var token = data.Token;
+            int id = data.Id;
+
+            PlaygroundAPIClient.Client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(token, "Bearer");
+
+            RestResponse<SuccessMessage> deleteuserresponse = PlaygroundAPIClient.DeleteUser(id);
         }
     }
 }
